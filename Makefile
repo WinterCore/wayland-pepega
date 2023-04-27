@@ -1,11 +1,11 @@
 CFLAGS = -std=c11 -Wall -Wextra
-LDFLAGS = -lwayland-client -lrt
+LDFLAGS = -lwayland-client -lrt -lm
 
-.PHONY: clean all executable
+.PHONY: clean all exec
 
-all: executable
+all: exec
 
-executable: Run
+exec: Run
 	./Run
 
 Run: src/main.c src/xdg-shell-client-protocol.h

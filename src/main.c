@@ -10,6 +10,7 @@
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <stdbool.h>
+#include "aids.h"
 
 #include "xdg-shell-client-protocol.h"
 
@@ -30,7 +31,7 @@ typedef struct state {
     size_t width;
     size_t height;
     size_t stride;
-
+;
 
     bool is_closed;
 } State;
@@ -128,10 +129,10 @@ void draw(State *state) {
         for (size_t x = 0; x < state->width; x += 1) {
             size_t offset = x * 4;
 
-            state->pix_data[y * state->stride + offset + 0] = 0x00; // B
-            state->pix_data[y * state->stride + offset + 1] = 0xFF; // G
+            state->pix_data[y * state->stride + offset + 0] = LERP(0, 0xFF, INVLERPANG(0, state->width, x)); // B
+            state->pix_data[y * state->stride + offset + 1] = LERP(0, 0xFF, INVLERPANG(0, state->height, y)); // G
             state->pix_data[y * state->stride + offset + 2] = 0x00; // R
-            state->pix_data[y * state->stride + offset + 3] = 0x30; // Alpha
+            state->pix_data[y * state->stride + offset + 3] = 0xFF; // Alpha
         }
     }
 
@@ -212,6 +213,8 @@ static void wl_surface_frame_done(
     wl_callback_add_listener(cb, &wl_surface_frame_listener, state);
 
     draw(state);
+    printf("[DEBUG]: Drawing\n");
+    fflush(stdout);
 }
 
 void toplevel_configure(
